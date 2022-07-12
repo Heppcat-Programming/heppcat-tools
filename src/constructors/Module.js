@@ -35,14 +35,20 @@ module.exports = class Module extends EventEmitter {
           );
           return { command: false };
         } else command += " " + args.shift().toLowerCase();
-      if (!this.commands[command]) return { command: false };
+      if (!this.commands[command])
+        return {
+          command: false,
+          modulePrefix: true,
+          attemptedCommand: command,
+        };
       return { command: true, data: { name: command, args: args } };
     } else {
       return { command: false };
     }
   }
-  loadCommands() {
+  async loadCommands() {
     this.commands = {};
+    this.commandsWithoutAlias = {};
     this.prefixes = [];
     let files = fs.readdirSync(this.commandPath);
     for (let f in files) {
@@ -52,13 +58,13 @@ module.exports = class Module extends EventEmitter {
         let name = f.name;
         if (f.prefix) this.prefixes.push(name);
         else {
-          for (let alias in f.alias) {
-            let a = f;
-            a["isAlias"] = true;
-            this.commands[f.alias[alias]] = a;
-          }
-          f["isAlias"] = false;
+          await Promise.all(
+            f.alias.map((i) => {
+              this.commands[i] = f;
+            })
+          );
           this.commands[name] = f;
+          this.commandsWithoutAlias[name] = f;
         }
       }
     }

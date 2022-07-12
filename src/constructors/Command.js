@@ -17,9 +17,6 @@ module.exports = class Command {
    * @param {String/Object} reply What to reply with
    */
   async reply(reply) {
-    if (typeof reply === "object")
-      if (reply.embeds)
-        await reply.embeds.forEach((embed) => defaultEmbed(embed));
     this.message.reply(reply);
   }
 };

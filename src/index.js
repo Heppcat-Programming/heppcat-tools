@@ -14,6 +14,7 @@ const config = require("../config.json");
 const DB = require("./constructors/DB.js");
 const db = new DB(config).client;
 let ModuleManager = require("./constructors/ModuleManager");
+const helpEmbed = require("./functions/helpEmbed");
 ModuleManager = new ModuleManager(client, __dirname + "/./Modules", db);
 
 client.on("messageCreate", (msg) => {
@@ -29,6 +30,15 @@ client.on("messageCreate", (msg) => {
   }
   if (command.command)
     module.execute(ModuleManager.parseCommand(msg, module, command.data));
+  else if (_guildModuleCommand.modulePrefix) {
+    if (_guildModuleCommand.attemptedCommand === "help") {
+      msg.reply({ embeds: [helpEmbed(_moduleForGuild)] });
+    }
+  } else if (command.modulePrefix) {
+    if (command.attemptedCommand === "help") {
+      msg.reply({ embeds: [helpEmbed(module)] });
+    }
+  }
 });
 
 client.login(config.token);
