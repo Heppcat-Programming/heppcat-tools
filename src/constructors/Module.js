@@ -8,12 +8,13 @@ module.exports = class Module extends EventEmitter {
    * @param {String} guildID Guild Id that the module works in
    * @param {String} prefix Guild Prefix
    */
-  constructor(client, commandPath, guildID = "global", prefix = "?") {
+  constructor(client, commandPath, guildID = "global", prefix = "?", name) {
     super({ captureRejections: true });
     this.commandPath = commandPath;
     this.guildID = guildID;
     this.client = client;
     this.prefix = prefix;
+    this.name = name;
     this.loadCommands();
   }
   execute(Command) {
@@ -68,5 +69,13 @@ module.exports = class Module extends EventEmitter {
         }
       }
     }
+  }
+  toJson() {
+    return {
+      name: this.name,
+      guildID: this.guildID,
+      commands: Object.values(this.commands),
+      prefix: this.prefix,
+    };
   }
 };

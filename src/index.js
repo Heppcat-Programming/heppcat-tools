@@ -15,7 +15,12 @@ const DB = require("./constructors/DB.js");
 const db = new DB(config).client;
 let ModuleManager = require("./constructors/ModuleManager");
 const helpEmbed = require("./functions/helpEmbed");
+const api = require("./api/express");
 ModuleManager = new ModuleManager(client, __dirname + "/./Modules", db);
+
+client.on("ready", () => {
+  api(3000);
+});
 
 client.on("messageCreate", (msg) => {
   let module = ModuleManager.modules["global"];
@@ -40,5 +45,7 @@ client.on("messageCreate", (msg) => {
     }
   }
 });
+
+module.exports = ModuleManager;
 
 client.login(config.token);

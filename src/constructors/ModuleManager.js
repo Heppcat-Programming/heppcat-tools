@@ -12,6 +12,7 @@ module.exports = class ModuleManager extends EventEmitter {
   }
   loadModules() {
     this.modules = {};
+    this.modulesByName = {};
     let folders = fs.readdirSync(this.modulePath);
     for (let folder in folders) {
       let files = fs.readdirSync(this.modulePath + "/" + folders[folder]);
@@ -23,8 +24,10 @@ module.exports = class ModuleManager extends EventEmitter {
             this.client,
             f.commandPath,
             f.guildID,
-            f.prefix
+            f.prefix,
+            folders[folder]
           );
+          this.modulesByName[module.name.toLowerCase()] = module;
           this.modules[module.guildID] = module;
         }
       }
