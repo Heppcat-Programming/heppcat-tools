@@ -8,6 +8,7 @@ app.get("/bot", async function (req, res) {
       JSON.stringify(
         {
           guilds: guilds,
+          guildCount: guilds.size,
         },
         (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
       )
@@ -31,7 +32,11 @@ app.get("/modules", (req, res) => {
       return res.status(404).send("Not Found");
     res.json(ModuleManager.modulesByName[req.query.m.toLowerCase()].toJson());
   } else {
-    res.json(Object.values(ModuleManager.modules).map((i) => i.toJson()));
+    data = {
+      modules: Object.values(ModuleManager.modules).map((i) => i.toJson()),
+      size: Object.keys(ModuleManager.modules).length,
+    };
+    res.send(data);
   }
 });
 
